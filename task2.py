@@ -1,9 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from tools import read_predicted_boxes, read_ground_truth_boxes
+from heapq import *
 
 
-def calculate_iou(prediction_box, gt_box):
+def calculate_iou(pt_box, gt_box):
     """Calculate intersection over union of single predicted and ground truth box.
     Args:
         prediction_box (np.array of floats): location of predicted object as
@@ -13,12 +14,21 @@ def calculate_iou(prediction_box, gt_box):
         returns:
             float: value of the intersection of union for the two boxes.
     """
-    # YOUR CODE HERE
+    intersection = 0
+    if pt_box[0] < gt_box[2] and pt_box[2] >gt_box[0]:
+        if pt_box[1] < gt_box[3] and pt_box[3]> gt_box[1]:
+            
+            x_min = max( gt_box[0], pt_box[0])
+            x_max = min( gt_box[2], pt_box[2])
+            y_min = max( gt_box[1], pt_box[1])
+            y_max = min( gt_box[3], pt_box[3])
+            
+            intersection += (x_max - x_min) * ( y_max-y_min)
 
-    # Compute intersection
+    union = (pt_box[2]- pt_box[0])*(pt_box[3]-pt_box[1]) + (gt_box[2]- gt_box[0])*(gt_box[3]-gt_box[1]) - intersection
 
-    # Compute union
-    iou = 0
+    iou = 0 
+    iou += intersection /union
     #END OF YOUR CODE
 
     assert iou >= 0 and iou <= 1
@@ -36,10 +46,11 @@ def calculate_precision(num_tp, num_fp, num_fn):
         float: value of precision
     """
     # YOUR CODE HERE
-
+    if (num_tp+num_fp) == 0: 
+        return 1
+    return num_tp/(num_tp+num_fp)
     #END OF YOUR CODE
 
-    raise NotImplementedError
 
 
 def calculate_recall(num_tp, num_fp, num_fn):
@@ -53,13 +64,16 @@ def calculate_recall(num_tp, num_fp, num_fn):
         float: value of recall
     """
     # YOUR CODE HERE
-
+    if (num_tp + num_fn) == 0: 
+        return  0
+    return num_tp/(num_tp + num_fn)
     #END OF YOUR CODE
 
-    raise NotImplementedError
 
 
 def get_all_box_matches(prediction_boxes, gt_boxes, iou_threshold):
+    
+
     """Finds all possible matches for the predicted boxes to the ground truth boxes.
         No bounding box can have more than one match.
         Remember: Matching of bounding boxes should be done with decreasing IoU order!
@@ -78,17 +92,31 @@ def get_all_box_matches(prediction_boxes, gt_boxes, iou_threshold):
             Each row includes [xmin, ymin, xmax, ymax]
     """
     # YOUR CODE HERE
-
+    matches = []    #This is going to be a heap
     # Find all possible matches with a IoU >= iou threshold
-
+    for i in range(len(prediction_boxes)): 
+        for j in range(len(gt_boxes)): 
+            iuo = calculate_iou(prediction_boxes[i], gt_boxes[j])
+            if iuo > iou_threshold:
+                heappush(matches, (-iuo, i,j))  #i is the index of the prediction box and j is the index of the gt box
+    #we are adding the negative of iuo since in the heapq is a min heap
 
     # Sort all matches on IoU in descending order
-
+    prediction_match = []
+    ground_match = []
+    i_used = []
+    j_used = []
     # Find all matches with the highest IoU threshold
+    while not len(matches): #This is true as long as our heap isn t empty
+        match = list(matches.pop())
+        if match[1] not in i_used: 
+            if match[2] not in j_used: 
+                prediction_match.append(prediction_boxes[match[1]])
+                ground_match.append(gt_boxes[match[2]])
 
+                                        
 
-
-    return np.array([]), np.array([])
+    return np.array([prediction_match]), np.array([ground_match])
     #END OF YOUR CODE
 
 
