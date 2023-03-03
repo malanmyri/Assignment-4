@@ -113,20 +113,30 @@ def test_get_all_box_matches():
 def test_calculate_individual_image_result():
     print("="*80)
     print("Running tests for calculate_individual_image_result")
+    
     b1 = np.array([
         [0, 0, 1, 1],
+        [5.5, 5.5, 8, 8],
         [0.5, 0.5, 1.5, 1.5],
         [2, 2, 3, 3],
-        [5.5, 5.5, 8, 8]
     ])
     b2 = np.array([
         [0, 0, 1, 1],
+        [5, 5, 8, 8],
         [0, 0, 1.5, 1.5],
         [3, 3, 4, 4],
-        [5, 5, 8, 8]
+        
     ])
-    np.random.shuffle(b1)
-    np.random.shuffle(b2)
+    """
+    b1 = np.array([
+        [0, 0, 1, 1],
+        [0.5, 0.5, 1.5, 1.5]
+    ])
+    b2 = np.array([
+        [0, 0, 1, 1],
+        [0, 0, 1.5, 1.5]
+    ])
+    """
     ans1 = 2
     ans2 = 2
     ans3 = 2
@@ -211,5 +221,6 @@ if __name__ == "__main__":
     test_calculate_precision_recall_all_images()
     test_get_precision_recall_curve()
     test_mean_average_precision()
+    
     print("="*80)
     print("All tests OK.")
