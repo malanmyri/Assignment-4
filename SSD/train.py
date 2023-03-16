@@ -59,10 +59,10 @@ def print_config(cfg):
     print("--------------------End of config file--------------------")
 
 
-@click.command()
-@click.argument("config_path", type=click.Path(exists=True, dir_okay=False, path_type=Path))
-@click.option("--evaluate-only", default=False, is_flag=True, help="Only run evaluation, no training.")
-def train(config_path: Path, evaluate_only: bool):
+#@click.command()
+#@click.argument("config_path", type=click.Path(exists=True, dir_okay=False, path_type=Path))
+#@click.option("--evaluate-only", default=False, is_flag=True, help="Only run evaluation, no training.")
+def train(config_path: Path = "Assignment-4/SSD/configs/ssd300.py", evaluate_only: bool = False):
     logger.logger.DEFAULT_SCALAR_LEVEL = logger.logger.DEBUG
     cfg = utils.load_config(config_path)
     print_config(cfg)

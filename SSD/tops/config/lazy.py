@@ -22,7 +22,6 @@ __all__ = ["LazyCall", "LazyConfig"]
 
 
 
-
 class LazyCall:
     """
     Wrap a callable so that when it's called, the call will not be executed,
